@@ -6,7 +6,7 @@ def create_window():
     canvas_window = tk.Tk()
 
     # Create buttons with custom size
-    tk.Button(canvas_window, text="Create new window", width=15, height=2).pack()
+    tk.Button(canvas_window, text="Income Statement", width=15, height=2).pack()
 
     # Load and display an image in canvas_window
     image = tk.PhotoImage(file="knowledge_graph_logo.png")  # Replace with your image file path
