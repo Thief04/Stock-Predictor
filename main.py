@@ -5,12 +5,28 @@ import string
 from bs4 import BeautifulSoup
 from PIL import Image, ImageTk
 
-def create_window(x):
+def income_statement(ticker):
+    income_window = tk.Toplevel()
+    income_window.title(ticker)
+
+    # Create a Label widget to display the ticker text
+    ticker_label = tk.Label(income_window, text=ticker)
+    ticker_label.pack(expand=True)  # This will center the label in the window
+
+    # You can add more widgets and functionality here if needed
+
+    income_window.geometry("200x100")
+
+    income_window.mainloop()
+
+
+def create_window(ticker):
     new_window = tk.Toplevel()
     canvas_window = tk.Toplevel()
 
     # Create buttons with custom size
-    tk.Button(canvas_window, text="Income Statement for " + x, width=30, height=5).pack()
+    tk.Button(canvas_window, text="Income Statement for " + ticker, command=lambda t=ticker: income_statement(t), width=30, height=5).pack()
+
 
     # Load and display an image in canvas_window using Pillow
     image = Image.open("knowledge_graph_logo.png")
@@ -23,6 +39,8 @@ def create_window(x):
 
     new_window.mainloop()
     canvas_window.mainloop()
+
+
 
 def main_function():
     # Make an HTTP request to the website and fetch valid tickers
@@ -68,5 +86,6 @@ def main_function():
 
     root.mainloop()
 
-# Call the main_function to execute your code
-main_function()
+
+user_input = input("here: ").upper()
+create_window(user_input)
