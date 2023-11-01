@@ -4,21 +4,38 @@ import requests
 import string
 from bs4 import BeautifulSoup
 from PIL import Image, ImageTk
+import yfinance as yf
+import pandas as pd
+from selenium import webdriver
+
+def format_income_statement(income_stmt):
+    # Format the income statement by adding commas to large numbers
+    formatted_income_stmt = income_stmt.applymap(lambda x: f'{x:,.0f}' if isinstance(x, (int, float)) else x)
+    return formatted_income_stmt
 
 def income_statement(ticker):
     income_window = tk.Toplevel()
     income_window.title(ticker)
 
-    # Create a Label widget to display the ticker text
-    ticker_label = tk.Label(income_window, text=ticker)
-    ticker_label.pack(expand=True)  # This will center the label in the window
+    # Fetch income statement data using yfinance
+    stock = yf.Ticker(ticker)
+    income_stmt = stock.financials
 
-    # You can add more widgets and functionality here if needed
+    # Format the income statement
+    formatted_income_stmt = format_income_statement(income_stmt)
 
-    income_window.geometry("200x100")
+    # Create a Text widget to display the formatted income statement
+    income_text = tk.Text(income_window)
+    income_text.pack(expand=True, fill='both')
+
+    # Insert the formatted income statement data into the Text widget
+    income_text.insert('1.0', formatted_income_stmt.to_string())
+
+    # You can add more widgets and formatting as needed
+
+    income_window.geometry("1200x1000")
 
     income_window.mainloop()
-
 
 def create_window(ticker):
     new_window = tk.Toplevel()
@@ -29,12 +46,28 @@ def create_window(ticker):
 
 
     # Load and display an image in canvas_window using Pillow
-    image = Image.open("knowledge_graph_logo.png")
+
+    # Initialize the WebDriver
+    driver = webdriver.Chrome()  # You can use a different WebDriver here (e.g., Firefox, Edge, etc.)
+
+    # Open a webpage
+    driver.get("https://www.google.com/search?q="+ ticker + "+stock&oq=aapl+stock&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDwyBggCEEUYPDIGCAMQRRg80gEHOTYwajBqMagCALACAA&sourceid=chrome&ie=UTF-8")  # Replace with the URL of the webpage you want to screenshot
+
+    # Take a screenshot
+    driver.save_screenshot("screenshot.png")  # Provide the desired file name for the screenshot
+
+    # Close the WebDriver
+
+
+    image = Image.open("screenshot.png")
+
+    driver.quit()
+
     photo = ImageTk.PhotoImage(image)
     image_label = tk.Label(new_window, image = photo)
     image_label.pack()
 
-    new_window.geometry("400x300")
+    new_window.geometry("1600x1200")
     canvas_window.geometry("400x300")
 
     new_window.mainloop()
@@ -87,5 +120,4 @@ def main_function():
     root.mainloop()
 
 
-user_input = input("here: ").upper()
-create_window(user_input)
+main_function()

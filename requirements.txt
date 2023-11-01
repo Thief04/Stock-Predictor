@@ -3,4 +3,5 @@ beautifulsoup4
 tkinter
 Pillow
 string
-
+yfinance
+selenium
