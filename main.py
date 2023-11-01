@@ -29,6 +29,8 @@ def income_statement(ticker):
 
     # Insert the formatted income statement data into the Text widget
     income_text.insert('1.0', formatted_income_stmt.to_string())
+
+
     income_window.geometry("1200x1000")
     income_window.mainloop()
 
@@ -61,6 +63,19 @@ def create_window(ticker):
     new_window.mainloop()
     canvas_window.mainloop()
 
+
+def is_valid_ticker(symbol):
+    try:
+        stock = yf.Ticker(symbol)
+        news = stock.news
+        if news:
+            return True
+        else:
+            return False
+    except Exception as e:
+        print(f"An error occurred while fetching info for {symbol}: {e}")
+
+
 def main_function():
     # Create the main application window
     root = tk.Tk()
@@ -74,7 +89,11 @@ def main_function():
     # Function to handle button click and validate input
     def handle_button_click():
         user_input = entry.get().strip().upper()
-        create_window(user_input)
+        if is_valid_ticker(user_input):
+            create_window(user_input)
+        else:
+            print(f"{user_input} is not a valid ticker.")
+        
 
     # Create a button to submit the input
     submit_button = tk.Button(root, text="Submit", command=handle_button_click)
@@ -82,8 +101,5 @@ def main_function():
 
     root.mainloop()
 
+
 main_function()
-
-
-
-
