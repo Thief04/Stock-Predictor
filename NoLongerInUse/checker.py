@@ -1,3 +1,6 @@
+#This code is no longer in use, it is here from when I was teaching myself HTTP requests.
+
+
 import requests
 import string
 from bs4 import BeautifulSoup

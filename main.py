@@ -1,12 +1,11 @@
 import tkinter as tk
 from tkinter import simpledialog
-import requests
-import string
 from bs4 import BeautifulSoup
 from PIL import Image, ImageTk
 import yfinance as yf
 import pandas as pd
 from selenium import webdriver
+import time
 
 def format_income_statement(income_stmt):
     # Format the income statement by adding commas to large numbers
@@ -30,11 +29,7 @@ def income_statement(ticker):
 
     # Insert the formatted income statement data into the Text widget
     income_text.insert('1.0', formatted_income_stmt.to_string())
-
-    # You can add more widgets and formatting as needed
-
     income_window.geometry("1200x1000")
-
     income_window.mainloop()
 
 def create_window(ticker):
@@ -44,23 +39,16 @@ def create_window(ticker):
     # Create buttons with custom size
     tk.Button(canvas_window, text="Income Statement for " + ticker, command=lambda t=ticker: income_statement(t), width=30, height=5).pack()
 
-
-    # Load and display an image in canvas_window using Pillow
-
     # Initialize the WebDriver
     driver = webdriver.Chrome()  # You can use a different WebDriver here (e.g., Firefox, Edge, etc.)
 
     # Open a webpage
-    driver.get("https://www.google.com/search?q="+ ticker + "+stock&oq=aapl+stock&gs_lcrp=EgZjaHJvbWUqBggAEEUYOzIGCAAQRRg7MgYIARBFGDwyBggCEEUYPDIGCAMQRRg80gEHOTYwajBqMagCALACAA&sourceid=chrome&ie=UTF-8")  # Replace with the URL of the webpage you want to screenshot
-
+    driver.get("https://ca.finance.yahoo.com/chart/" + ticker + "#eyJpbnRlcnZhbCI6ImRheSIsInBlcmlvZGljaXR5IjoxLCJ0aW1lVW5pdCI6bnVsbCwiY2FuZGxlV2lkdGgiOjgsImZsaXBwZWQiOmZhbHNlLCJ2b2x1bWVVbmRlcmxheSI6dHJ1ZSwiYWRqIjp0cnVlLCJjcm9zc2hhaXIiOnRydWUsImNoYXJ0VHlwZSI6ImxpbmUiLCJleHRlbmRlZCI6ZmFsc2UsIm1hcmtldFNlc3Npb25zIjp7fSwiYWdncmVnYXRpb25UeXBlIjoib2hsYyIsImNoYXJ0U2NhbGUiOiJsaW5lYXIiLCJwYW5lbHMiOnsiY2hhcnQiOnsicGVyY2VudCI6MSwiZGlzcGxheSI6IkFBUEwiLCJjaGFydE5hbWUiOiJjaGFydCIsImluZGV4IjowLCJ5QXhpcyI6eyJuYW1lIjoiY2hhcnQiLCJwb3NpdGlvbiI6bnVsbH0sInlheGlzTEhTIjpbXSwieWF4aXNSSFMiOlsiY2hhcnQiLCLigIx2b2wgdW5kcuKAjCJdfX0sInNldFNwYW4iOnt9LCJsaW5lV2lkdGgiOjIsInN0cmlwZWRCYWNrZ3JvdW5kIjp0cnVlLCJldmVudHMiOnRydWUsImNvbG9yIjoiIzAwODFmMiIsInN0cmlwZWRCYWNrZ3JvdWQiOnRydWUsImV2ZW50TWFwIjp7ImNvcnBvcmF0ZSI6eyJkaXZzIjp0cnVlLCJzcGxpdHMiOnRydWV9LCJzaWdEZXYiOnt9fSwic3ltYm9scyI6W3sic3ltYm9sIjoiQUFQTCIsInN5bWJvbE9iamVjdCI6eyJzeW1ib2wiOiJBQVBMIiwicXVvdGVUeXBlIjoiRVFVSVRZIiwiZXhjaGFuZ2VUaW1lWm9uZSI6IkFtZXJpY2EvTmV3X1lvcmsifSwicGVyaW9kaWNpdHkiOjEsImludGVydmFsIjoiZGF5IiwidGltZVVuaXQiOm51bGwsInNldFNwYW4iOnt9fV0sInN0dWRpZXMiOnsi4oCMdm9sIHVuZHLigIwiOnsidHlwZSI6InZvbCB1bmRyIiwiaW5wdXRzIjp7ImlkIjoi4oCMdm9sIHVuZHLigIwiLCJkaXNwbGF5Ijoi4oCMdm9sIHVuZHLigIwifSwib3V0cHV0cyI6eyJVcCBWb2x1bWUiOiIjMDBiMDYxIiwiRG93biBWb2x1bWUiOiIjZmYzMzNhIn0sInBhbmVsIjoiY2hhcnQiLCJwYXJhbWV0ZXJzIjp7IndpZHRoRmFjdG9yIjowLjQ1LCJjaGFydE5hbWUiOiJjaGFydCIsInBhbmVsTmFtZSI6ImNoYXJ0In19fX0-")  # Replace with the URL of the webpage you want to screenshot
+    time.sleep(1)
+    
     # Take a screenshot
     driver.save_screenshot("screenshot.png")  # Provide the desired file name for the screenshot
-
-    # Close the WebDriver
-
-
     image = Image.open("screenshot.png")
-
     driver.quit()
 
     photo = ImageTk.PhotoImage(image)
@@ -73,29 +61,7 @@ def create_window(ticker):
     new_window.mainloop()
     canvas_window.mainloop()
 
-
-
 def main_function():
-    # Make an HTTP request to the website and fetch valid tickers
-    valid_tickers = []
-
-    uppercase_alphabet = string.ascii_uppercase
-    for letter in uppercase_alphabet:
-        url = "https://eoddata.com/stocklist/NYSE/" + letter + ".htm"
-        response = requests.get(url)
-        if response.status_code == 200:
-            # Parse the HTML content of the page
-            soup = BeautifulSoup(response.text, 'html.parser')
-
-            # Find all <a> elements with the specified format
-            elements = soup.find_all('a', href=True, title=True, string=True)
-
-            # Extract valid tickers from elements where 'NYSE,' is in the title
-            valid_tickers.extend([element.text.strip() for element in elements if 'NYSE,' in element['title']])
-
-        else:
-            print(f"Failed to fetch data from {url}")
-
     # Create the main application window
     root = tk.Tk()
     root.geometry("400x100")
@@ -108,10 +74,7 @@ def main_function():
     # Function to handle button click and validate input
     def handle_button_click():
         user_input = entry.get().strip().upper()
-        if user_input != "" and user_input in valid_tickers:
-            create_window(user_input)
-        else:
-            print(f"{user_input} is not a valid NYSE ticker.")
+        create_window(user_input)
 
     # Create a button to submit the input
     submit_button = tk.Button(root, text="Submit", command=handle_button_click)
@@ -119,5 +82,8 @@ def main_function():
 
     root.mainloop()
 
-
 main_function()
+
+
+
+
